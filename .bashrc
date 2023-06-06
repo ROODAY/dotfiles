@@ -117,3 +117,29 @@ if ! shopt -oq posix; then
 fi
 alias config='/usr/bin/git --git-dir=/home/rraveendran/.cfg/ --work-tree=/home/rraveendran'
 alias ls='ls -a1 --group-directories-first --color=auto'
+alias in='task add +in'
+export PS1='[Inbox: $(task +in +PENDING count)] '$PS1
+
+
+tickle () {
+    deadline=$1
+    shift
+    in +tickle wait:$deadline $@
+}
+alias tick=tickle
+alias think='tickle +1d'
+
+webpage_title (){
+    wget -qO- "$*" | hxselect -s '\n' -c  'title' 2>/dev/null
+}
+
+read_and_review (){
+    link="$1"
+    title=$(webpage_title $link)
+    echo $title
+    descr="\"Read and review: $title\""
+    id=$(task add +next +rnr "$descr" | sed -n 's/Created task \(.*\)./\1/p')
+    task "$id" annotate "$link"
+}
+
+alias rnr=read_and_review
