@@ -143,3 +143,5 @@ read_and_review (){
 }
 
 alias rnr=read_and_review
+export VISUAL=vim
+export EDITOR="$VISUAL"
