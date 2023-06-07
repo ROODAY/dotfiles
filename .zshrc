@@ -101,3 +101,6 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias ls='ls -a1 --group-directories-first --color=auto'
+export PS1='[Inbox: $(task +in +PENDING count)] '$PS1
+export VISUAL=vim
+export EDITOR="$VISUAL"
