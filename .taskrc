@@ -51,3 +51,4 @@ report.next.labels          = ID,Active,Age,Urgency,Deps,P,Project,Tag,Recur,S,D
 report.next.sort            = brainpower-,priority-,urgency-
 uda.estimate.type=numeric
 uda.estimate.label=Estimate
+editor=vim
