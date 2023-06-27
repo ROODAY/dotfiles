@@ -131,3 +131,13 @@ read_and_review (){
 }
 
 alias rnr=read_and_review
+
+backup_tasks () {
+    git -C ~/.task add .
+    git -C ~/.task commit -m "Task Backup - $(date +'%m/%d/%Y %H:%M')"
+    git -C ~/.task push
+}
+
+alias but=backup_tasks
+alias tcd=task completed end:today
+
