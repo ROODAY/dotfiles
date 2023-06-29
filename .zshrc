@@ -107,6 +107,7 @@ export EDITOR="$VISUAL"
 
 # Taskwarrior stuff
 alias in='task add +in'
+alias someday='task add +someday'
 
 tickle () {
     deadline=$1
