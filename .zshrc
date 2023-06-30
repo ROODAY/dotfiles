@@ -109,3 +109,46 @@ source $ZSH/oh-my-zsh.sh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias ls='ls -a1 --group-directories-first --color=auto'
+#export PS1='[Inbox: $(task +in +PENDING count)] '$PS1
+export VISUAL=vim
+export EDITOR="$VISUAL"
+
+# Taskwarrior stuff
+alias in='task add +in'
+alias someday='task add +someday'
+
+tickle () {
+    deadline=$1
+    shift
+    in +tickle wait:$deadline $@
+}
+
+alias tick=tickle
+alias think='tickle +1d'
+
+webpage_title (){
+    wget -qO- "$*" | hxselect -s '\n' -c  'title' 2>/dev/null
+}
+
+read_and_review (){
+    link="$1"
+    title=$(webpage_title $link)
+    echo $title
+    descr="\"Read and review: $title\""
+    id=$(task add +next +rnr "$descr" | sed -n 's/Created task \(.*\)./\1/p')
+    task "$id" annotate "$link"
+}
+
+alias rnr=read_and_review
+
+backup_tasks () {
+    git -C ~/.task add .
+    git -C ~/.task commit -m "Task Backup - $(date +'%m/%d/%Y %H:%M')"
+    git -C ~/.task push
+}
+
+alias but=backup_tasks
+alias tcd=task completed end:today
