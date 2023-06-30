@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -8,7 +15,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -70,7 +77,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -99,46 +106,6 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
-alias ls='ls -a1 --group-directories-first --color=auto'
-export PS1='[Inbox: $(task +in +PENDING count)] '$PS1
-export VISUAL=vim
-export EDITOR="$VISUAL"
 
-# Taskwarrior stuff
-alias in='task add +in'
-alias someday='task add +someday'
-
-tickle () {
-    deadline=$1
-    shift
-    in +tickle wait:$deadline $@
-}
-
-alias tick=tickle
-alias think='tickle +1d'
-
-webpage_title (){
-    wget -qO- "$*" | hxselect -s '\n' -c  'title' 2>/dev/null
-}
-
-read_and_review (){
-    link="$1"
-    title=$(webpage_title $link)
-    echo $title
-    descr="\"Read and review: $title\""
-    id=$(task add +next +rnr "$descr" | sed -n 's/Created task \(.*\)./\1/p')
-    task "$id" annotate "$link"
-}
-
-alias rnr=read_and_review
-
-backup_tasks () {
-    git -C ~/.task add .
-    git -C ~/.task commit -m "Task Backup - $(date +'%m/%d/%Y %H:%M')"
-    git -C ~/.task push
-}
-
-alias but=backup_tasks
-alias tcd=task completed end:today
-
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

@@ -1,4 +1,4 @@
-# [Created by task 2.5.1 5/12/2023 16:31:39]
+# [Created by task 2.5.1 3/5/2022 12:45:29]
 # Taskwarrior program configuration file.
 # For more documentation, see http://taskwarrior.org or try 'man task', 'man task-color',
 # 'man task-sync' or 'man taskrc'
@@ -29,33 +29,8 @@ data.location=~/.task
 #include /usr/share/taskwarrior/solarized-light-256.theme
 #include /usr/share/taskwarrior/no-color.theme
 
-urgency.user.tag.in.coefficient=15.0
-report.in.columns           = id,description
-report.in.description       = Inbox
-report.in.filter            = status:pending limit:page (+in)
-report.in.labels            = ID,Description
-uda.reviewed.type=date
-uda.reviewed.label=Reviewed
-report._reviewed.description=Tasksh review report.  Adjust the filter to your needs.
-report._reviewed.columns=uuid
-report._reviewed.sort=reviewed+,modified+
-report._reviewed.filter=( reviewed.none: or reviewed.before:now-6days ) and ( +PENDING or +WAITING )
-uda.brainpower.type=string
-uda.brainpower.label=Brainpower
-uda.brainpower.values=H,M,L
-uda.brainpower.default=M
-report.next.description     = Most urgent tasks
-report.next.columns         = id,start.age,entry.age,urgency,depends,priority,project,tags,recur,scheduled.countdown,due.remaining,until.remaining,description,brainpower
-report.next.filter          = status:pending and +next
-report.next.labels          = ID,Active,Age,Urgency,Deps,P,Project,Tag,Recur,S,Due,Until,Description,Brainpower
-report.next.sort            = brainpower-,priority-,urgency-
-report.list.filter          = status:pending -someday
-report.list.sort            = start-,due+,project+,brainpower-,priority-,urgency-
-report.someday.columns      = id,start.age,entry.age,depends.indicator,priority,project,tags,recur.indicator,scheduled.countdown,due,until.remaining,description.count,urgency
-report.someday.description  = Most details of tasks
-report.someday.filter       = status:pending +someday
-report.someday.labels       = ID,Active,Age,D,P,Project,Tags,R,Sch,Due,Until,Description,Urg
-report.someday.sort         = start-,due+,project+,urgency-
-uda.estimate.type=numeric
-uda.estimate.label=Estimate
-editor=vim
+taskd.certificate=\/home\/rooday\/.task\/rudhra_raveendran.cert.pem
+taskd.key=\/home\/rooday\/.task\/rudhra_raveendran.key.pem
+taskd.ca=\/home\/rooday\/.task\/ca.cert.pem
+taskd.server=tasks.rooday.com:53589
+taskd.credentials=Personal\/Rudhra Raveendran\/5eaee632-6110-4dff-9690-d115cb4a6617
