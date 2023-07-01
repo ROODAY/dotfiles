@@ -152,4 +152,4 @@ backup_tasks () {
 
 alias but=backup_tasks
 alias put='git -C ~/.task pull'
-alias tcd=task completed end:today
+alias tcd='task completed end:today'
