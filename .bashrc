@@ -117,7 +117,7 @@ if ! shopt -oq posix; then
 fi
 
 alias tt="taskwarrior-tui"
-alias config='/usr/bin/git --git-dir=/home/rraveendran/.cfg/ --work-tree=/home/rraveendran'
+alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias ls='ls -a1 --group-directories-first --color=auto'
 alias in='task add +in'
 export PS1='[Inbox: $(task +in +PENDING count)] '$PS1
