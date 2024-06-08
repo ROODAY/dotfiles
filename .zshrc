@@ -158,3 +158,7 @@ alias tcd='task completed end:today'
 alias vim=nvim
 alias v=vim
 alias nv=nvim
+
+alias src='omz reload'
+
+set -o vi
