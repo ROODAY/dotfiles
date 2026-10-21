@@ -1,5 +1,4 @@
-local vimrc = "~/.vimrc"
-vim.cmd.source(vimrc)
+vim.cmd("source ~/.vimrc")
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -25,113 +24,91 @@ require("lazy").setup({
 			vim.o.timeout = true
 			vim.o.timeoutlen = 300
 		end,
-		opts = {
-			-- your configuration comes here
-			-- or leave it empty to use the default settings
-			-- refer to the configuration section below
-		},
+		opts = {},
 	},
 	{
 		"folke/tokyonight.nvim",
 		lazy = false,
 		priority = 1000,
 		opts = {},
+		config = function(_, opts)
+			require("tokyonight").setup(opts)
+			vim.cmd("colorscheme tokyonight")
+		end,
 	},
 	{
 		"folke/lazydev.nvim",
 		ft = "lua", -- only load on lua files
 		opts = {
 			library = {
-				-- See the configuration section for more details
 				-- Load luvit types when the `vim.uv` word is found
 				{ path = "luvit-meta/library", words = { "vim%.uv" } },
 			},
 		},
 	},
 	{ "Bilal2453/luvit-meta", lazy = true }, -- optional `vim.uv` typings
-	{ -- optional completion source for require statements and module annotations
+	{ -- completion source for require statements and module annotations
 		"hrsh7th/nvim-cmp",
 		opts = function(_, opts)
 			opts.sources = opts.sources or {}
 			table.insert(opts.sources, {
 				name = "lazydev",
-				group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+				group_index = 0, -- skip loading LuaLS completions
 			})
 		end,
 	},
 	"mhartington/formatter.nvim",
 	{
 		"glacambre/firenvim",
-
-		-- Lazy load firenvim
-		-- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
+		-- Only load when Neovim is started by firenvim (in the browser)
 		lazy = not vim.g.started_by_firenvim,
 		build = function()
+			-- Load the plugin first so firenvim#install exists
+			require("lazy").load({ plugins = { "firenvim" }, wait = true })
 			vim.fn["firenvim#install"](0)
 		end,
 	},
 })
 
-vim.cmd([[colorscheme tokyonight]])
-
--- Utilities for creating configurations
-local util = require("formatter.util")
-
--- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
-require("formatter").setup({
-	-- Enable or disable logging
-	logging = true,
-	-- Set the log level
-	log_level = vim.log.levels.WARN,
-	-- All formatter configurations are opt-in
-	filetype = {
-		-- Formatter configurations for filetype "lua" go here
-		-- and will be executed in order
-		lua = {
-			-- "formatter.filetypes.lua" defines default configurations for the
-			-- "lua" filetype
-			require("formatter.filetypes.lua").stylua,
-
-			-- You can also define your own configuration
-			function()
-				-- Supports conditional formatting
-				if util.get_current_buffer_file_name() == "special.lua" then
-					return nil
-				end
-
-				-- Full specification of configurations is down below and in Vim help
-				-- files
-				return {
-					exe = "stylua",
-					args = {
-						"--search-parent-directories",
-						"--stdin-filepath",
-						util.escape_path(util.get_current_buffer_file_path()),
-						"--",
-						"-",
-					},
-					stdin = true,
-				}
-			end,
+-- Formatter setup (guarded so a missing plugin doesn't break startup)
+local ok, util = pcall(require, "formatter.util")
+if ok then
+	require("formatter").setup({
+		logging = true,
+		log_level = vim.log.levels.WARN,
+		filetype = {
+			lua = {
+				require("formatter.filetypes.lua").stylua,
+				function()
+					if util.get_current_buffer_file_name() == "special.lua" then
+						return nil
+					end
+					return {
+						exe = "stylua",
+						args = {
+							"--search-parent-directories",
+							"--stdin-filepath",
+							util.escape_path(util.get_current_buffer_file_path()),
+							"--",
+							"-",
+						},
+						stdin = true,
+					}
+				end,
+			},
+			["*"] = {
+				require("formatter.filetypes.any").remove_trailing_whitespace,
+			},
 		},
+	})
 
-		-- Use the special "*" filetype for defining formatter configurations on
-		-- any filetype
-		["*"] = {
-			-- "formatter.filetypes.any" defines default configurations for any
-			-- filetype
-			require("formatter.filetypes.any").remove_trailing_whitespace,
-		},
-	},
-})
+	vim.keymap.set("n", "<leader>f", ":Format<CR>", { silent = true })
+	vim.keymap.set("n", "<leader>F", ":FormatWrite<CR>", { silent = true })
 
-vim.keymap.set({ "n" }, "<leader>f", ":Format<CR>", { silent = true })
-vim.keymap.set({ "n" }, "<leader>F", ":FormatWrite<CR>", { silent = true })
+	local group = vim.api.nvim_create_augroup("__formatter__", { clear = true })
+	vim.api.nvim_create_autocmd("BufWritePost", {
+		group = group,
+		command = ":FormatWrite",
+	})
+end
 
-local augroup = vim.api.nvim_create_augroup
-local autocmd = vim.api.nvim_create_autocmd
-augroup("__formatter__", { clear = true })
-autocmd("BufWritePost", {
-	group = "__formatter__",
-	command = ":FormatWrite",
-})

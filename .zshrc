@@ -162,3 +162,4 @@ alias nv=nvim
 alias src='omz reload'
 
 set -o vi
+export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
